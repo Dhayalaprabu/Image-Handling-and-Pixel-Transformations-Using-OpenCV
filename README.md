@@ -1,173 +1,382 @@
-# Image-Handling-and-Pixel-Transformations-Using-OpenCV 
+# 
+# EX. NO. 01: IMAGE HANDLING AND PIXEL TRANSFORMATIONS USING OPENCV
+# 
 
-## AIM:
-Write a Python program using OpenCV that performs the following tasks:
+# Import libraries
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
-1) Read and Display an Image.  
-2) Adjust the brightness of an image.  
-3) Modify the image contrast.  
-4) Generate a third image using bitwise operations.
+# 
+# 1. READ EAGLE IMAGE AS GRAYSCALE
+# 
 
-## Software Required:
-- Anaconda - Python 3.7
-- Jupyter Notebook (for interactive development and execution)
+img = cv2.imread('Eagle_in_Flight.jpg', cv2.IMREAD_GRAYSCALE)
 
-## Algorithm:
-### Step 1:
-Load an image from your local directory and display it.
+if img is None:
+    raise FileNotFoundError("Eagle_in_Flight.jpg not found")
 
-### Step 2:
-Create a matrix of ones (with data type float64) to adjust brightness.
+# 
+# 2. PRINT IMAGE WIDTH, HEIGHT AND CHANNEL
 
-### Step 3:
-Create brighter and darker images by adding and subtracting the matrix from the original image.  
-Display the original, brighter, and darker images.
+height, width = img.shape
+print("1. Eagle Image Dimensions")
+print("Width:", width)
+print("Height:", height)
+print("Channels:", 1)
 
-### Step 4:
-Modify the image contrast by creating two higher contrast images using scaling factors of 1.1 and 1.2 (without overflow fix).  
-Display the original, lower contrast, and higher contrast images.
+# 
+# 3. DISPLAY GRAYSCALE IMAGE
 
-### Step 5:
-Split the image (boy.jpg) into B, G, R components and display the channels
+plt.figure(figsize=(6, 5))
+plt.imshow(img, cmap='gray')
+plt.title("Eagle in Flight - Grayscale")
+plt.axis('off')
+plt.show()
 
-## Program Developed By:
-- **Name:** [Your Name Here]  
-- **Register Number:** [Your Register Number Here]
+# 4. SAVE IMAGE AS PNG
 
-  ### Ex. No. 01
+cv2.imwrite('Eagle_Grayscale.png', img)
+print("Grayscale image saved as Eagle_Grayscale.png")
 
-#### 1. Read the image ('Eagle_in_Flight.jpg') using OpenCV imread() as a grayscale image.
-```python
-# YOUR CODE HERE
-```
+# 
+# 5. READ SAVED IMAGE AS COLOR IMAGE
 
-#### 2. Print the image width, height & Channel.
-```python
-# YOUR CODE HERE
-```
+img_color = cv2.imread('Eagle_Grayscale.png', cv2.IMREAD_COLOR)
 
-#### 3. Display the image using matplotlib imshow().
-```python
-# YOUR CODE HERE
-```
+if img_color is None:
+    raise FileNotFoundError("Eagle_Grayscale.png not found")
 
-#### 4. Save the image as a PNG file using OpenCV imwrite().
-```python
-# YOUR CODE HERE
-```
+img_color = cv2.cvtColor(img_color, cv2.COLOR_BGR2RGB)
 
-#### 5. Read the saved image above as a color image using cv2.cvtColor().
-```python
-# YOUR CODE HERE
-```
+# 
+# 6. DISPLAY COLOR IMAGE AND DIMENSIONS
+# 
 
-#### 6. Display the Colour image using matplotlib imshow() & Print the image width, height & channel.
-```python
-# YOUR CODE HERE
-```
+height, width, channel = img_color.shape
 
-#### 7. Crop the image to extract any specific (Eagle alone) object from the image.
-```python
-# YOUR CODE HERE
-```
+print("\n2. Color Image Dimensions")
+print("Width:", width)
+print("Height:", height)
+print("Channels:", channel)
 
-#### 8. Resize the image up by a factor of 2x.
-```python
-# YOUR CODE HERE
-```
+plt.figure(figsize=(6, 5))
+plt.imshow(img_color)
+plt.title("Eagle Image - Color")
+plt.axis('off')
+plt.show()
 
-#### 9. Flip the cropped/resized image horizontally.
-```python
-# YOUR CODE HERE
-```
+# 
+# 7. CROP THE EAGLE
+# 
 
-#### 10. Read in the image ('Apollo-11-launch.jpg').
-```python
-# YOUR CODE HERE
-```
+# Adjust coordinates if needed to capture the eagle
+cropped_img = img[100:500, 100:500]
 
-#### 11. Add the following text to the dark area at the bottom of the image (centered on the image):
-```python
+plt.figure(figsize=(6, 5))
+plt.imshow(cropped_img, cmap='gray')
+plt.title("Cropped Eagle")
+plt.axis('off')
+plt.show()
+
+# 
+# 8. RESIZE IMAGE BY 2X
+# 
+
+resized_img = cv2.resize(
+    cropped_img, None,
+    fx=2, fy=2,
+    interpolation=cv2.INTER_CUBIC
+)
+
+plt.figure(figsize=(6, 5))
+plt.imshow(resized_img, cmap='gray')
+plt.title("Resized Eagle - 2X")
+plt.axis('off')
+plt.show()
+
+# 
+# 9. FLIP IMAGE HORIZONTALLY
+# 
+
+flipped_img = cv2.flip(resized_img, 1)
+
+plt.figure(figsize=(6, 5))
+plt.imshow(flipped_img, cmap='gray')
+plt.title("Horizontally Flipped Eagle")
+plt.axis('off')
+plt.show()
+
+# 
+# 10. READ APOLLO 11 LAUNCH IMAGE
+# 
+
+apollo_bgr = cv2.imread('Apollo-11-launch.jpg')
+
+if apollo_bgr is None:
+    raise FileNotFoundError("Apollo-11-launch.jpg not found")
+
+apollo = cv2.cvtColor(apollo_bgr, cv2.COLOR_BGR2RGB)
+
+# 
+# 11. ADD TEXT TO BOTTOM OF APOLLO IMAGE
+# 
+
 text = 'Apollo 11 Saturn V Launch, July 16, 1969'
 font_face = cv2.FONT_HERSHEY_PLAIN
-# YOUR CODE HERE: use putText()
-```
+font_scale = 1.5
+thickness = 2
 
-#### 12. Draw a magenta rectangle that encompasses the launch tower and the rocket.
-```python
-rect_color = magenta
-# YOUR CODE HERE
-```
+apollo_annotated = apollo.copy()
 
-#### 13. Display the final annotated image.
-```python
-# YOUR CODE HERE
-```
+text_size, baseline = cv2.getTextSize(
+    text, font_face, font_scale, thickness
+)
 
-#### 14. Read the image ('Boy.jpg').
-```python
-# YOUR CODE HERE
-```
+text_x = (apollo.shape[1] - text_size[0]) // 2
+text_y = apollo.shape[0] - 20
 
-#### 15. Adjust the brightness of the image.
-```python
-# Create a matrix of ones (with data type float64)
-# matrix_ones = 
-# YOUR CODE HERE
-```
+cv2.putText(
+    apollo_annotated,
+    text,
+    (text_x, text_y),
+    font_face,
+    font_scale,
+    (255, 255, 255),
+    thickness,
+    cv2.LINE_AA
+)
 
-#### 16. Create brighter and darker images.
-```python
-img_brighter = cv2.add(img, matrix)
-img_darker = cv2.subtract(img, matrix)
-# YOUR CODE HERE
-```
+# 
+# 12. DRAW MAGENTA RECTANGLE AROUND ROCKET AND TOWER
+# 
 
-#### 17. Display the images (Original Image, Darker Image, Brighter Image).
-```python
-# YOUR CODE HERE
-```
+rect_color = (255, 0, 255)  # Magenta in RGB
 
-#### 18. Modify the image contrast.
-```python
-# Create two higher contrast images using the 'scale' option with factors of 1.1 and 1.2 (without overflow fix)
-matrix1 = 
-matrix2 = 
-# img_higher1 = 
-# img_higher2 = 
-# YOUR CODE HERE
-```
+# Approximate coordinates; adjust to fit your image
+x1 = int(apollo.shape[1] * 0.35)
+y1 = int(apollo.shape[0] * 0.10)
+x2 = int(apollo.shape[1] * 0.70)
+y2 = int(apollo.shape[0] * 0.90)
 
-#### 19. Display the images (Original, Lower Contrast, Higher Contrast).
-```python
-# YOUR CODE HERE
-```
+cv2.rectangle(
+    apollo_annotated,
+    (x1, y1),
+    (x2, y2),
+    rect_color,
+    3
+)
 
-#### 20. Split the image (boy.jpg) into the B,G,R components & Display the channels.
-```python
-# YOUR CODE HERE
-```
+# 13. DISPLAY FINAL ANNOTATED APOLLO IMAGE
 
-#### 21. Merged the R, G, B , displays along with the original image
-```python
-# YOUR CODE HERE
-```
+plt.figure(figsize=(10, 7))
+plt.imshow(apollo_annotated)
+plt.title("Apollo 11 Launch - Annotated")
+plt.axis('off')
+plt.show()
 
-#### 22. Split the image into the H, S, V components & Display the channels.
-```python
-# YOUR CODE HERE
-```
-#### 23. Merged the H, S, V, displays along with original image.
-```python
-# YOUR CODE HERE
-```
+cv2.imwrite(
+    'Apollo_11_Annotated.png',
+    cv2.cvtColor(apollo_annotated, cv2.COLOR_RGB2BGR)
+)
 
-## Output:
-- **i)** Read and Display an Image.  
-- **ii)** Adjust Image Brightness.  
-- **iii)** Modify Image Contrast.  
-- **iv)** Generate Third Image Using Bitwise Operations.
+# 14. READ BOY IMAGE
+# 
 
-## Result:
-Thus, the images were read, displayed, brightness and contrast adjustments were made, and bitwise operations were performed successfully using the Python program.
+boy_bgr = cv2.imread('boy.jpg')
 
+if boy_bgr is None:
+    raise FileNotFoundError("boy.jpg not found")
+
+boy = cv2.cvtColor(boy_bgr, cv2.COLOR_BGR2RGB)
+
+plt.figure(figsize=(6, 5))
+plt.imshow(boy)
+plt.title("Original Boy Image")
+plt.axis('off')
+plt.show()
+
+# 15. CREATE MATRIX OF ONES FOR BRIGHTNESS ADJUSTMENT
+# 
+
+matrix_ones = np.ones(boy.shape, dtype=np.float64)
+matrix = matrix_ones * 50
+
+boy_float = boy.astype(np.float64)
+
+# 
+# 16. CREATE BRIGHTER AND DARKER IMAGES
+
+img_brighter = np.clip(
+    boy_float + matrix, 0, 255
+).astype(np.uint8)
+
+img_darker = np.clip(
+    boy_float - matrix, 0, 255
+).astype(np.uint8)
+
+# 
+# 17. DISPLAY ORIGINAL, DARKER AND BRIGHTER IMAGES
+# 
+
+plt.figure(figsize=(15, 5))
+
+plt.subplot(1, 3, 1)
+plt.imshow(boy)
+plt.title("Original Image")
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.imshow(img_darker)
+plt.title("Darker Image")
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.imshow(img_brighter)
+plt.title("Brighter Image")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# 18. MODIFY IMAGE CONTRAST
+# 
+
+matrix1 = np.ones(boy.shape, dtype=np.float64) * 1.1
+matrix2 = np.ones(boy.shape, dtype=np.float64) * 1.2
+
+img_higher1 = np.clip(
+    boy_float * matrix1, 0, 255
+).astype(np.uint8)
+
+img_higher2 = np.clip(
+    boy_float * matrix2, 0, 255
+).astype(np.uint8)
+
+# 
+# 19. DISPLAY ORIGINAL, LOWER AND HIGHER CONTRAST IMAGES
+# 
+
+img_lower = np.clip(
+    boy_float * 0.8, 0, 255
+).astype(np.uint8)
+
+plt.figure(figsize=(15, 5))
+
+plt.subplot(1, 3, 1)
+plt.imshow(boy)
+plt.title("Original Image")
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.imshow(img_lower)
+plt.title("Lower Contrast")
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.imshow(img_higher1)
+plt.title("Higher Contrast - 1.1")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# 
+# 20. SPLIT IMAGE INTO B, G, R CHANNELS
+# 
+
+boy_bgr = cv2.cvtColor(boy, cv2.COLOR_RGB2BGR)
+B, G, R = cv2.split(boy_bgr)
+
+plt.figure(figsize=(15, 5))
+
+plt.subplot(1, 3, 1)
+plt.imshow(B, cmap='gray')
+plt.title("Blue Channel")
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.imshow(G, cmap='gray')
+plt.title("Green Channel")
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.imshow(R, cmap='gray')
+plt.title("Red Channel")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# 
+# 21. MERGE R, G, B CHANNELS
+# 
+
+merged_rgb = cv2.merge((R, G, B))
+
+plt.figure(figsize=(10, 5))
+
+plt.subplot(1, 2, 1)
+plt.imshow(boy)
+plt.title("Original Image")
+plt.axis('off')
+
+plt.subplot(1, 2, 2)
+plt.imshow(merged_rgb)
+plt.title("Merged RGB Image")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# 
+# 22. SPLIT IMAGE INTO H, S, V CHANNELS
+# 
+
+hsv = cv2.cvtColor(boy, cv2.COLOR_RGB2HSV)
+H, S, V = cv2.split(hsv)
+
+plt.figure(figsize=(15, 5))
+
+plt.subplot(1, 3, 1)
+plt.imshow(H, cmap='gray')
+plt.title("Hue Channel")
+plt.axis('off')
+
+plt.subplot(1, 3, 2)
+plt.imshow(S, cmap='gray')
+plt.title("Saturation Channel")
+plt.axis('off')
+
+plt.subplot(1, 3, 3)
+plt.imshow(V, cmap='gray')
+plt.title("Value Channel")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+# 23. MERGE H, S, V CHANNELS
+# 
+
+merged_hsv = cv2.merge((H, S, V))
+merged_hsv_rgb = cv2.cvtColor(
+    merged_hsv, cv2.COLOR_HSV2RGB
+)
+
+plt.figure(figsize=(10, 5))
+
+plt.subplot(1, 2, 1)
+plt.imshow(boy)
+plt.title("Original Image")
+plt.axis('off')
+
+plt.subplot(1, 2, 2)
+plt.imshow(merged_hsv_rgb)
+plt.title("Merged HSV Image")
+plt.axis('off')
+
+plt.tight_layout()
+plt.show()
+
+print("All 23 image-processing tasks completed successfully.")
